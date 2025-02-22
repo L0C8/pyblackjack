@@ -6,10 +6,22 @@ def clear():
 
 class Deck:
     def __init__(self):
-        print("Test")
-        
+        self.cards = [] 
+        self.suites = ["Hearts", "Clubs", "Spades", "Diamonds"]
+        self.symbols = ["♥", "♣", "♠", "♦"]
+        self.ranks = ["Ace", "Two", "Three", "Four", "Five", "Six",
+                      "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
+        self._build_deck()  
+        self.shuffle()  
+
+    def _build_deck(self):
+        print("todo")
+
     def shuffle(self):
-        return 5  
+        random.shuffle(self.cards)
+
+    def draw_card(self):
+        print("todo")
     
 class Game:
     score = 0
@@ -23,13 +35,3 @@ class Game:
     def getScore(self):
         return self.score 
     
-cards = {"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"}
-suite = {"Hearts", "Clubs", "Spades", "Diamonds"}
-symbol = {"♥", "♣", "♠", "♦"}
-
-#test
-game = Game(25)
-print(game.getScore())
-game.addScore(5)
-print(game.getScore())
-
