@@ -67,6 +67,7 @@ class BlackjackGame:
         self.player_score = 0
         self.dealer_score = 0
         self.player_credits = 0
+        self.set_game()
 
     # Runtime Functions
     def set_game(self):
@@ -93,6 +94,12 @@ class BlackjackGame:
     # Game Functions
     def start_game(self):
         clear()
+        if self.player_credits <= 0:
+            print(Fore.RED + str(self.player_credits) +"You're out of credits! Resetting to 150." + Style.RESET_ALL)
+            self.player_credits = 150
+            self.save_credits()
+
+        bet = self.get_bet()
 
         for _ in range(2):
             self.player_hand.append(self.deck.draw_card())
@@ -105,7 +112,7 @@ class BlackjackGame:
         if self.calculate_hand_value(self.player_hand) <= 21:
             self.dealer_turn()
 
-        self.determine_winner()
+        self.determine_winner(bet)
 
     def player_turn(self):
         while True:
@@ -157,7 +164,7 @@ class BlackjackGame:
             print(f"Total value: {self.calculate_hand_value(self.dealer_hand)}")
         print()
 
-    def determine_winner(self):
+    def determine_winner(self, bet):
         player_total = self.calculate_hand_value(self.player_hand)
         dealer_total = self.calculate_hand_value(self.dealer_hand)
 
@@ -167,14 +174,32 @@ class BlackjackGame:
 
         if player_total > 21:
             print(Fore.RED + "You busted! Dealer wins." + Style.RESET_ALL)
+            self.player_credits -= bet
         elif dealer_total > 21:
             print(Fore.GREEN + "Dealer busted! You win!" + Style.RESET_ALL)
+            self.player_credits += bet
         elif player_total > dealer_total:
             print(Fore.GREEN + "You win!" + Style.RESET_ALL)
+            self.player_credits += bet
         elif player_total < dealer_total:
             print(Fore.RED + "Dealer wins!" + Style.RESET_ALL)
+            self.player_credits -= bet
         else:
             print(Fore.YELLOW + "It's a tie!" + Style.RESET_ALL)
+
+        print(f"Your updated credits: {self.player_credits}")
+        self.save_credits()
+
+    def get_bet(self):
+        while True:
+            try:
+                bet = int(input(f"You have {self.player_credits} credits. Enter your bet: "))
+                if 0 < bet <= self.player_credits:
+                    return bet
+                else:
+                    print("Invalid bet amount.")
+            except ValueError:
+                print("Please enter a valid number.")
 
 if __name__ == "__main__":
     game = BlackjackGame()
