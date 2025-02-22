@@ -2,6 +2,8 @@ from colorama import Fore, Style
 import os
 import random
 
+CREDIT_FILE = ".credits.txt"
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -52,7 +54,6 @@ class Card:
         return f"{self.rank} of {self.suite} {self.symbol}"
 
     def get_value(self, current_total):
-        """Handles Ace as 1 or 11 dynamically."""
         if self.value == -1:
             return 11 if current_total + 11 <= 21 else 1
         return self.value
@@ -65,10 +66,33 @@ class BlackjackGame:
         self.dealer_hand = []
         self.player_score = 0
         self.dealer_score = 0
+        self.player_credits = 0
 
-    def start_game(self):
+    # Runtime Functions
+    def set_game(self):
         clear()
         print(Fore.GREEN + "Welcome to Terminal Blackjack!\n" + Style.RESET_ALL)
+        choice = input("Would you like to (N)ew game or (L)oad existing game? ").lower()
+
+        if choice == 'l' and os.path.exists(CREDIT_FILE):
+            self.load_credits()
+        else:
+            self.player_credits = 150
+            self.save_credits()
+            print("Starting a new game with 150 credits.")
+
+    def load_credits(self):
+        with open(CREDIT_FILE, "r") as file:
+            self.player_credits = int(file.read())
+        print(f"Loaded game with {self.player_credits} credits.\n")
+
+    def save_credits(self):
+        with open(CREDIT_FILE, "w") as file:
+            file.write(str(self.player_credits))
+
+    # Game Functions
+    def start_game(self):
+        clear()
 
         for _ in range(2):
             self.player_hand.append(self.deck.draw_card())
@@ -118,7 +142,7 @@ class BlackjackGame:
         return total
 
     def show_hands(self, initial):
-        print("\nYour hand:")
+        print("Your hand:")
         for card in self.player_hand:
             print(f" - {card}")
         print(f"Total value: {self.calculate_hand_value(self.player_hand)}")
@@ -154,6 +178,7 @@ class BlackjackGame:
 
 if __name__ == "__main__":
     game = BlackjackGame()
+    game.set_game()
     while True:
         game.start_game()
         again = input("Play again? (Y/N): ").lower()
