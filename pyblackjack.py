@@ -52,7 +52,6 @@ class Card:
         return f"{self.rank} of {self.suite} {self.symbol}"
 
     def get_value(self, current_total):
-        """Handles Ace as 1 or 11 dynamically."""
         if self.value == -1:
             return 11 if current_total + 11 <= 21 else 1
         return self.value
